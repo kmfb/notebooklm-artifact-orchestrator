@@ -25,16 +25,14 @@ jobs:
             skills/telegram-book-fetch/scripts/fetch_book_from_telegram_bot.py \
             skills/notebooklm-guarded-generator/scripts/guarded_generate.py
 
-      - name: Cache file check
+      - name: Tracked cache file check
         run: |
-          if find . -type d -name '__pycache__' | grep -q .; then
-            echo 'Found __pycache__ directories';
-            find . -type d -name '__pycache__';
+          if git ls-files | grep -E '(^|/)__pycache__/'; then
+            echo 'Tracked __pycache__ paths detected';
             exit 1;
           fi
-          if find . -type f -name '*.pyc' | grep -q .; then
-            echo 'Found .pyc files';
-            find . -type f -name '*.pyc';
+          if git ls-files | grep -E '\.pyc$'; then
+            echo 'Tracked .pyc files detected';
             exit 1;
           fi
 
