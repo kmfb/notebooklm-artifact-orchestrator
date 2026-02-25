@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Python compile check
+        run: |
+          python -m py_compile \
+            scripts/package_notebooklm_artifact_orchestrator_bundle.py \
+            skills/book-to-artifact/scripts/run_book_to_artifact.py \
+            skills/notebooklm-chapter-menu/scripts/run_chapter_menu.py \
+            skills/notebooklm-chapter-menu/scripts/pipeline/notebooklm_publish_run.py \
+            skills/telegram-book-fetch/scripts/fetch_book_from_telegram_bot.py \
+            skills/notebooklm-guarded-generator/scripts/guarded_generate.py
+
+      - name: Cache file check
+        run: |
+          if find . -type d -name '__pycache__' | grep -q .; then
+            echo 'Found __pycache__ directories';
+            find . -type d -name '__pycache__';
+            exit 1;
+          fi
+          if find . -type f -name '*.pyc' | grep -q .; then
+            echo 'Found .pyc files';
+            find . -type f -name '*.pyc';
+            exit 1;
+          fi
+
+      - name: Sensitive pattern scan
+        run: |
+          set +e
+          rg -n "(/Users/[A-Za-z0-9._-]+|fd15bf2a-2011-4d72-a8ed-566743b41adc|0AMb0gmswimNYUk9PVA|825784726437756948|18683613290|ghp_[A-Za-z0-9]{20,}|gho_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]+PRIVATE KEY-----)" skills scripts --glob '!scripts/package_notebooklm_artifact_orchestrator_bundle.py'
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo 'Sensitive pattern matched';
+            exit 1;
+          fi
+
+      - name: Strict package audit
+        run: |
+          python3 scripts/package_notebooklm_artifact_orchestrator_bundle.py \
+            --workspace-root . \
+            --output-dir dist/notebooklm-artifact-orchestrator-bundle \
+            --strict

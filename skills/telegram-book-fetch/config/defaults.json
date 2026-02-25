@@ -1,0 +1,4 @@
+{
+  "telegram_config_path": "~/.config/telegram-downloader/config.json",
+  "output_root": ""
+}

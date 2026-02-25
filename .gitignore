@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+
+# Build outputs
+dist/
+tmp/
+
+# Env/local
+.env
+.venv/

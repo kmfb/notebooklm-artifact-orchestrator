@@ -1,0 +1,11 @@
+{
+  "workspace_root": "",
+  "obsidian_vault_path": "",
+  "obsidian_subdir": "NotebookLM/Infographics",
+  "notion_data_source_id": "",
+  "notion_api_key_file": "~/.config/notion/api_key",
+  "gdrive_enabled": true,
+  "gdrive_client_secrets": "~/.config/gdrive/client_secrets.json",
+  "gdrive_token_file": "~/.config/gdrive/token.json",
+  "gdrive_folder_id": ""
+}
